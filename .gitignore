@@ -1,0 +1,8 @@
+﻿################################################################################
+# Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
+################################################################################
+
+/POMP-A1/.vs/POMP-A1/FileContentIndex
+/POMP-A1/.vs/POMP-A1/v17/ipch/AutoPCH
+/POMP-A1/.vs/POMP-A1/v17
+/POMP-A1/POMP-A1/__vm
