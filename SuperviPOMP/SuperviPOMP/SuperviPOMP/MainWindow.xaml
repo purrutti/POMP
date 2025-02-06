@@ -1,0 +1,15 @@
+﻿<Window x:Class="SuperviPOMP.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WebSocket Server" Height="200" Width="400">
+    <Grid>
+        <!-- Bouton pour démarrer le serveur -->
+        <Button Content="Start Server" Click="StartServer_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="10"/>
+
+        <!-- Bouton pour arrêter le serveur -->
+        <Button Content="Stop Server" Click="StopServer_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="120,10,0,0"/>
+
+        <!-- Zone de texte pour afficher les logs -->
+        <TextBox x:Name="LogTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="360" Height="130" Margin="10,50,0,0" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+</Window>

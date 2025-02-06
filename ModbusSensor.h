@@ -120,7 +120,7 @@ public:
         return 0;
     }
 
-    bool readValues(ModbusRtu* master,double *value)
+    bool readValues(ModbusRtu* master,double *O2, double *temp)
     {
         setQueryR();
         if (!querySent) {
@@ -133,7 +133,11 @@ public:
                 querySent = false;
                 u.b[0] = data[3];
                 u.b[1] = data[2];
-                *value = u.fval;
+                *O2 = u.fval;
+
+                u.b[0] = data[1];
+                u.b[1] = data[0];
+                *temp = u.fval;
                 for (int i = 0; i < 16; i++) data[i] = 0;
                 return 1;
             }

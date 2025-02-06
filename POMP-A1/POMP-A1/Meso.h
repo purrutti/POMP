@@ -123,6 +123,8 @@ public:
     double O2;
 
     Regul regulTemp;
+    tempo tempoHRON, tempoHROFF;
+    bool toggleHR;
 
 
     int startAddress;
@@ -137,9 +139,6 @@ public:
         pinDebitmetre = _pinDebitmetre;
         pinCmdHR = _pinCmdHR;
 
-        regulTemp.Kp = 5;
-        regulTemp.Ki = 1;
-        regulTemp.Kd = 500;
         debit = 0;
         lastState = LOW;
     };
@@ -187,6 +186,37 @@ public:
         }
         return false;
         
+    }
+
+
+    int regulTemperature() {
+        int dutyCycle = 0;
+        regulTemp.pid.Compute();
+
+        regulTemp.sortiePID_pc = (int)regulTemp.sortiePID;
+
+        dutyCycle = regulTemp.sortiePID;
+        //dutyCycle = 50;
+        unsigned long cycleDuration = 10000;
+        tempoHRON.interval = dutyCycle * cycleDuration / 100;
+        tempoHROFF.interval = cycleDuration - tempoHRON.interval;;
+        if (tempoHRON.interval == 0) toggleHR = false;
+        else if (tempoHROFF.interval == 0) toggleHR = true;
+        else if (toggleHR) {
+            if (elapsed(&tempoHRON)) {
+                tempoHROFF.debut = millis();
+                toggleHR = false;
+            }
+        }
+        else {
+            if (elapsed(&tempoHROFF)) {
+                tempoHRON.debut = millis();
+                toggleHR = true;
+            }
+        }
+
+        digitalWrite(pinCmdHR, toggleHR);
+        return dutyCycle;
     }
 
 };
