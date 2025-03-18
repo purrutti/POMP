@@ -19,8 +19,8 @@ const byte PLCID = 1;
 const byte PIN_DEBITMETRE[12] = { 54,55,56,57,58,59,19,60,61,62,63,64 };//Chaud, froid, ambiant
 
 const byte PIN_HR[12] = { 36,37,38,39,40,4,41,42,43,44,45,8 };//Chaud, froid, ambiant
-const byte PIN_PRESSION = 65;//Chaud, froid, ambiant
-const byte PIN_V3V = 5;
+const byte PIN_PRESSION = 65;
+const byte PIN_V2V = 5;
 
 
 // Enter a MAC address for your controller below.

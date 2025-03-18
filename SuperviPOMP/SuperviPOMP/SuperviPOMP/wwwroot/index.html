@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesocosm Data Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mesocosm Data Table</h1>
+    <table id="mesocosmTable">
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Mesocosm 1</th>
+                <th>Mesocosm 2</th>
+                <!-- Add more Mesocosm columns as needed -->
+                <th>Mesocosm 24</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Temperature</td>
+                <td id="temperature_1"></td>
+                <td id="temperature_2"></td>
+                <!-- Add more Temperature cells as needed -->
+                <td id="temperature_24"></td>
+            </tr>
+            <tr>
+                <td>O2</td>
+                <td id="o2_1"></td>
+                <td id="o2_2"></td>
+                <!-- Add more O2 cells as needed -->
+                <td id="o2_24"></td>
+            </tr>
+            <tr>
+                <td>Flowrate</td>
+                <td id="flowrate_1"></td>
+                <td id="flowrate_2"></td>
+                <!-- Add more Flowrate cells as needed -->
+                <td id="flowrate_24"></td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        // Function to update the table with JSON data
+        function updateTable(data) {
+            const mesocosmId = data.MesocosmId;
+            document.getElementById(`temperature_${mesocosmId}`).innerText = data.Temperature;
+            document.getElementById(`o2_${mesocosmId}`).innerText = data.O2;
+            document.getElementById(`flowrate_${mesocosmId}`).innerText = data.Flowrate;
+        }
+
+        // Simulate receiving JSON data (Replace this with actual WebSocket or API call)
+        function simulateDataReception() {
+            const sampleData = {
+                MesocosmId: "1",
+                Temperature: "29.7",
+                O2: "118.3",
+                Flowrate: "3.4"
+            };
+
+            // Update the table with the sample data
+            updateTable(sampleData);
+        }
+
+        // Call the function to simulate data reception
+        simulateDataReception();
+
+// For actual implementation, use WebSocket or fetch API to receive data
+// Example with WebSocket:
+// const socket = new WebSocket('ws://yourwebsocketserver');
+// socket.onmessage = function(event) {
+//     const data = JSON.parse(event.data);
+//     updateTable(data);
+// };
+
+    </script>
+</body>
+</html>

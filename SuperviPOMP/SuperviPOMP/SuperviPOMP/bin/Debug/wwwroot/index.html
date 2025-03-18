@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesocosm Data Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mesocosm Data Table</h1>
+    <table id="mesocosmTable">
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Mesocosm 1</th>
+                <th>Mesocosm 2</th>
+                <!-- Add more Mesocosm columns as needed -->
+                <th>Mesocosm 24</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Temperature</td>
+                <td id="temperature_1"></td>
+                <td id="temperature_2"></td>
+                <!-- Add more Temperature cells as needed -->
+                <td id="temperature_24"></td>
+            </tr>
+            <tr>
+                <td>O2</td>
+                <td id="o2_1"></td>
+                <td id="o2_2"></td>
+                <!-- Add more O2 cells as needed -->
+                <td id="o2_24"></td>
+            </tr>
+            <tr>
+                <td>Flowrate</td>
+                <td id="flowrate_1"></td>
+                <td id="flowrate_2"></td>
+                <!-- Add more Flowrate cells as needed -->
+                <td id="flowrate_24"></td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        // Function to update the table with JSON data
+        function updateTable(data) {
+            const mesocosmId = data.MesocosmId;
+            document.getElementById(`temperature_${mesocosmId}`).innerText = data.Temperature;
+            document.getElementById(`o2_${mesocosmId}`).innerText = data.O2;
+            document.getElementById(`flowrate_${mesocosmId}`).innerText = data.Flowrate;
+        }
+
+        // Function to establish WebSocket connection and handle incoming messages
+        function receiveData() {
+            const socket = new WebSocket('ws://127.0.0.1:8181');
+
+            socket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                updateTable(data);
+            };
+
+            socket.onopen = function (event) {
+                console.log("WebSocket is open now.");
+                // Request data every second
+                setInterval(() => {
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({ request: "data" }));
+                    }
+                }, 1000);
+            };
+
+            socket.onclose = function (event) {
+                console.log("WebSocket is closed now.");
+            };
+
+            socket.onerror = function (error) {
+                console.log("WebSocket error: ", error);
+            };
+        }
+
+        // Establish the WebSocket connection once
+        receiveData();
+    </script>
+</body>
+</html>

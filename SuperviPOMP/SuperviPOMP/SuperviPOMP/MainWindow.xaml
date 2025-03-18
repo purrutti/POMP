@@ -1,15 +1,51 @@
-﻿<Window x:Class="SuperviPOMP.MainWindow"
+﻿<Window x:Class="WebSocketServerExample.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="WebSocket Server" Height="200" Width="400">
-    <Grid>
-        <!-- Bouton pour démarrer le serveur -->
-        <Button Content="Start Server" Click="StartServer_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="10"/>
+        Title="SuperviFlumes" Height="654" Width="1036">
+    <Grid Margin="0,0,33,12">
 
-        <!-- Bouton pour arrêter le serveur -->
-        <Button Content="Stop Server" Click="StopServer_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="120,10,0,0"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="89.96"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="159*"/>
+            <RowDefinition Height="Auto" MinHeight="155.08"/>
+        </Grid.RowDefinitions>
 
-        <!-- Zone de texte pour afficher les logs -->
-        <TextBox x:Name="LogTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="360" Height="130" Margin="10,50,0,0" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,5,5,55">
+            <Button x:Name="StartServerButton" Content="Start Server" Click="StartServerButton_Click" Margin="5" Height="30"/>
+            <Button x:Name="StopServerButton" Content="Stop Server" Click="StopServerButton_Click" Height="30"/>
+            <Label x:Name="ServerStatusLabel" Content="Server status" Height="29"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" x:Name="AquariumsDataGrid" AutoGenerateColumns="False" ItemsSource="{Binding aquariums, Mode=OneWay}" Margin="5,5,326,10" Grid.RowSpan="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding ID}"/>
+                <DataGridTextColumn Header="PLCID" Binding="{Binding PLCID}"/>
+                <DataGridTextColumn Header="Debit" Binding="{Binding debit}"/>
+                <DataGridTextColumn Header="Température" Binding="{Binding temperature}"/>
+                <DataGridTextColumn Header="02 %" Binding="{Binding oxy}"/>
+                <DataGridTextColumn Header="02 mg/L" Binding="{Binding oxymgl, StringFormat=N2}"/>
+                <!-- Add more columns as needed -->
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <DataGrid x:Name="MasterDataDataGrid" AutoGenerateColumns="False" Margin="699,10,10,226" Grid.Row="1" Grid.RowSpan="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Condition" Binding="{Binding ConditionID}" />
+                <DataGridTextColumn Header="Temperature" Binding="{Binding Temperature}" />
+                <DataGridTextColumn Header="Pression" Binding="{Binding Pression}" />
+                <DataGridTextColumn Header="Debit" Binding="{Binding Debit}" />
+                <!-- Ignore these columns -->
+                <!--<DataGridTextColumn Header="Regulation Temp" Binding="{Binding RTemp}" />
+        <DataGridTextColumn Header="Regulation Pression" Binding="{Binding RPression}" />-->
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <ScrollViewer x:Name="MessageScrollViewer" Grid.Row="3" Margin="10,6,10,10" Height="150">
+            <TextBox x:Name="MessageTextBox" IsReadOnly="True" TextWrapping="Wrap" />
+        </ScrollViewer>
+        <Label x:Name="labelDebittotal" Content="Débit Total:" HorizontalAlignment="Left" Margin="699,129,0,0" Grid.Row="2" VerticalAlignment="Top" Width="94"/>
+        <Button x:Name="sensorCalibrationButton" Content="Sensor Calibration" Click="sensorCalibrationButton_Click" Margin="10,50,855,20"/>
+
     </Grid>
 </Window>

@@ -1,0 +1,491 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>InfluxDB.Client.Core</name>
+    </assembly>
+    <members>
+        <member name="T:InfluxDB.Client.Core.Arguments">
+             <summary>
+             Functions for parameter validation.
+            
+             <para>
+             Inspiration from InfluxDB java - <a href="https://github.com/influxdata/influxdb-java/">thanks</a>
+             </para>
+             </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Arguments.CheckNonEmptyString(System.String,System.String)">
+            <summary>
+            Enforces that the string is not empty.
+            </summary>
+            <param name="value">the string to test</param>
+            <param name="name">the variable name for reporting</param>
+            <exception cref="T:System.ArgumentException">if the string is empty</exception>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Arguments.CheckDuration(System.String,System.String)">
+            <summary>
+            Enforces that the string is duration literal.
+            </summary>
+            <param name="value">the string to test</param>
+            <param name="name">the variable name for reporting</param>
+            <exception cref="T:System.ArgumentException">if the string is not duration literal</exception>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Arguments.CheckPositiveNumber(System.Int32,System.String)">
+            <summary>
+            Enforces that the number is larger than 0.
+            </summary>
+            <param name="number">the number to test</param>
+            <param name="name">the variable name for reporting</param>
+            <exception cref="T:System.ArgumentException">if the number is less or equal to 0</exception>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Arguments.CheckNotNegativeNumber(System.Int32,System.String)">
+            <summary>
+            Enforces that the number is not negative.
+            </summary>
+            <param name="number">the number to test</param>
+            <param name="name">the variable name for reporting</param>
+            <exception cref="T:System.ArgumentException">if the number is less or equal to 0</exception>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Arguments.CheckNotNull(System.Object,System.String)">
+            <summary>
+            Checks that the specified object reference is not null.
+            </summary>
+            <param name="obj">the object to test</param>
+            <param name="name">the variable name for reporting</param>
+            <exception cref="T:System.NullReferenceException">if the object is null</exception>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Measurement">
+            <summary>
+            The annotation is used for mapping POCO class into line protocol.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Column">
+            <summary>
+            The annotation is used to customize bidirectional mapping between POCO and Flux query result or Line Protocol.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Exceptions.InfluxException.Code">
+            <summary>
+                Gets the reference code unique to the error type. If the reference code is not present than return "0".
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Exceptions.InfluxException.Status">
+            <summary>
+                Gets the HTTP status code of the unsuccessful response. If the response is not present than return "0".
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Exceptions.HttpException.ErrorBody">
+            <summary>
+                The JSON unsuccessful response body.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Exceptions.HttpException.RetryAfter">
+            <summary>
+                The retry interval is used when the InfluxDB server does not specify "Retry-After" header.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Exceptions.HttpException.Headers">
+            <summary>
+                The response headers
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.BadRequestException">
+            <summary>
+            The exception for response: HTTP 400 - Bad Request.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.UnauthorizedException">
+            <summary>
+            The exception for response: HTTP 401 - Unauthorized.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.PaymentRequiredException">
+            <summary>
+            The exception for response: HTTP 402 - Payment Required.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.ForbiddenException">
+            <summary>
+            The exception for response: HTTP 403 - Forbidden.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.NotFoundException">
+            <summary>
+            The exception for response: HTTP 404 - Not Found.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.MethodNotAllowedException">
+            <summary>
+            The exception for response: HTTP 405 - Method Not Allowed.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.NotAcceptableException">
+            <summary>
+            The exception for response: HTTP 406 - Not Acceptable.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.ProxyAuthenticationRequiredException">
+            <summary>
+            The exception for response: HTTP 407 - Proxy Authentication Required.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.RequestTimeoutException">
+            <summary>
+            The exception for response: HTTP 408 - Request Timeout.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.RequestEntityTooLargeException">
+            <summary>
+            The exception for response: HTTP 413 - Request Entity Too Large.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.UnprocessableEntityException">
+            <summary>
+            The exception for response: HTTP 422 - Unprocessable Entity.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.TooManyRequestsException">
+            <summary>
+            The exception for response: HTTP 429 - Too Many Requests.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.InternalServerErrorException">
+            <summary>
+            The exception for response: HTTP 500 - Internal Server Error.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.HttpNotImplementedException">
+            <summary>
+            The exception for response: HTTP 501 - Not Implemented.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.BadGatewayException">
+            <summary>
+            The exception for response: HTTP 502 - Bad Gateway.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Exceptions.ServiceUnavailableException">
+            <summary>
+            The exception for response: HTTP 503 - Service Unavailable.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Domain.FluxColumn">
+            <summary>
+            This class represents column header specification of <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/>.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxColumn.Index">
+            <summary>
+            Column index in record.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxColumn.Label">
+            <summary>
+            The label of column (e.g., "_start", "_stop", "_time").
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxColumn.DataType">
+            <summary>
+            The data type of column (e.g., "string", "long", "dateTime:RFC3339").
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxColumn.Group">
+            <summary>
+            Boolean flag indicating if the column is part of the table's group key.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxColumn.DefaultValue">
+            <summary>
+            Default value to be used for rows whose string value is the empty string.
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Domain.FluxRecord">
+             <summary>
+             A record is a tuple of values. Each record in the table represents a single point in the series.
+            
+             <para><a href="http://bit.ly/flux-spec#record">Specification</a>.</para>
+             </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxRecord.Table">
+            <summary>
+            The Index of the table that the record belongs.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxRecord.Values">
+            <summary>
+            The record's values.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxRecord.Row">
+            <summary>
+            The record's columns.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetStart">
+            <returns>the inclusive lower time bound of all records</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetStop">
+            <returns>the exclusive upper time bound of all records</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetTime">
+            <summary>
+             The timestamp as a <see cref="T:NodaTime.Instant"/>
+             </summary>
+             <returns>the time of the record</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetTimeInDateTime">
+            <summary>
+             The timestamp as a <see cref="T:System.DateTime"/>
+             </summary>
+             <returns>the time of the record</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetValue">
+            <returns>the value of the record</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetField">
+            <returns>get value with key <i>_field</i></returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetMeasurement">
+            <returns>get value with key <i>_measurement</i></returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetValueByIndex(System.Int32)">
+            <summary>
+            Get FluxRecord value by index.
+            </summary>
+            <param name="index">index of value in CSV response</param>
+            <returns>value</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxRecord.GetValueByKey(System.String)">
+            <summary>
+            Get FluxRecord value by key.
+            </summary>
+            <param name="key">the key of value in CSV response</param>
+            <returns>value</returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Domain.FluxTable">
+             <summary>
+             This class represents table structure of Flux CSV Response.
+            <a href="http://bit.ly/flux-spec">Specification</a>.
+             </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxTable.Columns">
+            <summary>
+            Table column's labels and types.
+            </summary>
+        </member>
+        <member name="P:InfluxDB.Client.Core.Flux.Domain.FluxTable.Records">
+            <summary>
+            Table records.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Domain.FluxTable.GetGroupKey">
+            <summary>
+            A table's group key is subset of the entire columns dataset that assigned to the table.
+            As such, all records within a table will have the same values for each column that is part of the group key.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Exceptions.FluxCsvParserException">
+            <summary>
+            The error that occurs during mapping response to <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/>, <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxRecord"/> or <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxColumn"/>. 
+            </summary>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Internal.AttributesCache">
+            <summary>
+            The cache for DomainObject attributes. The attributes are used for mapping from/to DomainObject.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.AttributesCache.GetProperties(System.Type)">
+            <summary>
+            Get properties for specified Type.
+            </summary>
+            <param name="type">type of DomainObject</param>
+            <returns>properties for DomainObject</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.AttributesCache.GetAttribute(System.Reflection.PropertyInfo)">
+            <summary>
+            Get Mapping attribute for specified property.
+            </summary>
+            <param name="property">property of DomainObject</param>
+            <returns>Property Attribute</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.AttributesCache.GetColumnName(InfluxDB.Client.Core.Column,System.Reflection.PropertyInfo)">
+            <summary>
+            Get name of field or tag for specified attribute and property
+            </summary>
+            <param name="attribute">attribute of DomainObject</param>
+            <param name="property">property of DomainObject</param>
+            <returns>name used for mapping</returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Internal.FluxCsvParser">
+            <summary>
+            This class us used to construct <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/> from CSV.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.FluxCsvParser.IFluxResponseConsumer.Accept(System.Int32,InfluxDB.Client.Core.Flux.Domain.FluxTable)">
+            <summary>
+            Add new <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/> to a consumer.
+            </summary>
+            <param name="index">index of table</param>
+            <param name="table">new <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/></param>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.FluxCsvParser.IFluxResponseConsumer.Accept(System.Int32,InfluxDB.Client.Core.Flux.Domain.FluxRecord)">
+            <summary>
+            Add new <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxRecord"/> to a consumer.
+            </summary>
+            <param name="index">index of table</param>
+            <param name="record">new <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxRecord"/></param>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.FluxCsvParser.ParseFluxResponse(System.IO.Stream,System.Threading.CancellationToken,InfluxDB.Client.Core.Flux.Internal.FluxCsvParser.IFluxResponseConsumer)">
+            <summary>
+            Parse Flux CSV response to <see cref="T:InfluxDB.Client.Core.Flux.Internal.FluxCsvParser.IFluxResponseConsumer"/>.
+            </summary>
+            <param name="source">CSV Data source</param>
+            <param name="cancellable">to cancel parsing</param>
+            <param name="consumer">to accept <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/> or <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxRecord"/></param>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.FluxCsvParser.ParseFluxResponseAsync(System.IO.TextReader,System.Threading.CancellationToken)">
+            <summary>
+            Parse Flux CSV response to <see cref="T:System.Collections.Generic.IAsyncEnumerable`1"/>.
+            </summary>
+            <param name="reader">CSV Data source reader</param>
+            <param name="cancellationToken">cancellation token</param>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.FluxResultMapper.ToPoco(InfluxDB.Client.Core.Flux.Domain.FluxRecord,System.Type)">
+            <summary>
+            Maps FluxRecord into custom POCO class.
+            </summary>
+            <param name="record">the Flux record</param>
+            <param name="type">the POCO type</param>
+            <returns>An POCO object</returns>
+            <exception cref="T:InfluxDB.Client.Core.Exceptions.InfluxException"></exception>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.FluxResultMapper.ToPoco``1(InfluxDB.Client.Core.Flux.Domain.FluxRecord)">
+            <summary>
+            Maps FluxRecord into custom POCO class.
+            </summary>
+            <param name="record">the Flux record</param>
+            <typeparam name="T">the POCO type</typeparam>
+            <returns></returns>
+            <exception cref="T:InfluxDB.Client.Core.Exceptions.InfluxException"></exception>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.FluxResultMapper.GetParseMethod(System.Type,System.Type)">
+            <summary>
+            Gets the static Parse method on the target type taking the value type as a single parameter.
+            </summary>
+            <param name="parserType">The type declaring the Parse method.</param>
+            <param name="valueType">The type that will be passed to the Parse method.</param>
+            <returns>The matching Parse method.</returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Internal.IFluxResultMapper">
+            <summary>
+            Mapper that is used to map FluxRecord into DomainObject.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.IFluxResultMapper.ConvertToEntity``1(InfluxDB.Client.Core.Flux.Domain.FluxRecord)">
+            <summary>
+            Converts FluxRecord to DomainObject specified by Type.
+            </summary>
+            <param name="fluxRecord">Flux record</param>
+            <typeparam name="T">Type of DomainObject</typeparam>
+            <returns>Converted DomainObject</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Internal.IFluxResultMapper.ConvertToEntity(InfluxDB.Client.Core.Flux.Domain.FluxRecord,System.Type)">
+            <summary>
+            Converts FluxRecord to DomainObject specified by Type.
+            </summary>
+            <param name="fluxRecord">Flux record</param>
+            <param name="type">Type of DomainObject</param>
+            <returns>Converted DomainObject</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Serialization.IAnnotatedCsvParser.Parse(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Parsing query results in annotated CSV format into list of <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/>.
+            </summary>
+            <param name="annotatedCsv">Query results in annotated CSV format</param>
+            <param name="cancellationToken">To cancel the parsing</param>
+            <returns>Parsed Annotated CSV into list of <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/></returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Flux.Serialization.AnnotatedCsvParser">
+            <summary>
+            Parser for processing <see href="https://docs.influxdata.com/influxdb/cloud/reference/syntax/annotated-csv/">Annotated CSV</see>.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Serialization.AnnotatedCsvParser.#ctor">
+            <summary>
+            Public constructor.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Flux.Serialization.AnnotatedCsvParser.Parse(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Parsing query results in annotated CSV format into list of <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/>.
+            </summary>
+            <param name="annotatedCsv">Query results in annotated CSV format</param>
+            <param name="cancellationToken">To cancel the parsing</param>
+            <returns>Parsed Annotated CSV into list of <see cref="T:InfluxDB.Client.Core.Flux.Domain.FluxTable"/></returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.InfluxDBTraceFilter">
+            <summary>
+            The <see cref="T:InfluxDB.Client.Core.InfluxDBTraceFilter"/> is used to filter client trace messages by category.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.InfluxDBTraceFilter.SuppressInflux">
+            <summary>
+            Suppress all client trace messages.
+            </summary>
+            <returns>Trace Filter</returns>
+        </member>
+        <member name="M:InfluxDB.Client.Core.InfluxDBTraceFilter.SuppressInfluxVerbose">
+            <summary>
+            Suppress all client trace messages except <see cref="F:InfluxDB.Client.Core.InfluxDBTraceFilter.CategoryInfluxError"/>, <see cref="F:InfluxDB.Client.Core.InfluxDBTraceFilter.CategoryInfluxQueryError"/>, <see cref="F:InfluxDB.Client.Core.InfluxDBTraceFilter.CategoryInfluxWriteError"/>.
+            </summary>
+            <returns>Trace Filter</returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.Internal.RequestBeforeAfterInterceptor`1">
+            <summary>
+            The interceptor that is called before and after the request.
+            </summary>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Internal.RequestBeforeAfterInterceptor`1.#ctor(System.Action{RestSharp.RestRequest},System.Action{System.Int32,System.Func{System.Collections.Generic.IEnumerable{RestSharp.HeaderParameter}},`0})">
+            <summary>
+            Construct the interceptor.
+            </summary>
+            <param name="beforeRequest">Intercept request before HTTP call</param>
+            <param name="afterRequest">Intercept response before parsing resutlts</param>
+        </member>
+        <member name="M:InfluxDB.Client.Core.Internal.RestSharpExtensions.ToHeaderParameters(System.Net.Http.Headers.HttpHeaders,System.Net.Http.Headers.HttpContentHeaders)">
+            <summary>
+            Transform `HttpHeaders` to `HeaderParameter` type.
+            </summary>
+            <param name="httpHeaders"></param>
+            <param name="httpContentHeaders">Additionally content Headers</param>
+            <returns>IEnumerable&lt;HeaderParameter&gt;</returns>
+        </member>
+        <member name="T:InfluxDB.Client.Core.LogLevel">
+            <summary>
+            This enum represents REST client verbosity levels.
+            </summary>
+        </member>
+        <member name="F:InfluxDB.Client.Core.LogLevel.None">
+            <summary>
+            Disable logging.
+            </summary>
+        </member>
+        <member name="F:InfluxDB.Client.Core.LogLevel.Basic">
+            <summary>
+            Logs request and response lines.
+            </summary>
+        </member>
+        <member name="F:InfluxDB.Client.Core.LogLevel.Headers">
+            <summary>
+            Logs request and response lines including headers.
+            </summary>
+        </member>
+        <member name="F:InfluxDB.Client.Core.LogLevel.Body">
+            <summary>
+            Logs request and response lines including headers and body (if present).
+            <para>Note that applying the `Body` LogLevel will disable chunking while streaming
+            and will load the whole response into memory.</para>
+            </summary>
+        </member>
+    </members>
+</doc>
