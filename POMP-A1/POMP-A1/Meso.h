@@ -174,7 +174,7 @@ public:
         // Calculer le débit toutes les secondes
         if (millis() - lastTime >= flowIntegrationDuration) {
             // Calculer le débit en litres par minute
-            debit = (pulseCount / 10200.0) * 60.0; // Pulses per litre * minutes per second
+            debit = (pulseCount / 10200.0) * (60000 / flowIntegrationDuration); // Pulses per litre * seconds per minute
             // Afficher le débit
             Serial.print("Débit : ");
             Serial.print(debit);
@@ -214,7 +214,7 @@ public:
                 toggleHR = true;
             }
         }
-
+        toggleHR = true;
         digitalWrite(pinCmdHR, toggleHR);
         return dutyCycle;
     }

@@ -26,6 +26,9 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Globalization;
 
 namespace WebSocketServerExample
 {
@@ -86,6 +89,18 @@ namespace WebSocketServerExample
 
             return existingObject;
         }
+    }
+
+    public class InSituData
+    {
+
+        [JsonProperty(Required = Required.Default)]
+        public IList<IList<string>> data { get; set; }
+
+        public DateTime time { get; set; }
+        public double salinite { get; set; }
+        public double temperature { get; set; }
+        public double oxygen { get; set; }
     }
     public class TrameJson
     {
@@ -341,6 +356,9 @@ namespace WebSocketServerExample
         public ObservableCollection<Aquarium> aquariums { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
+
+        public InSituData inSituData = new InSituData();
+
         public AlarmSettings alarmSettings { get; set; }
 
         string token = ConfigurationManager.AppSettings["InfluxDBToken"].ToString();
@@ -375,6 +393,8 @@ namespace WebSocketServerExample
             {
                 InitializeComponent();
                 InitializeAsync();
+
+                InitializeAsyncGetInSituData();
 
                 MessageScrollViewer.ScrollChanged += MessageScrollViewer_ScrollChanged;
                 MessageScrollViewer.PreviewMouseDown += MessageScrollViewer_PreviewMouseDown;
@@ -567,15 +587,85 @@ namespace WebSocketServerExample
 
             //await AcceptWebSocketClientsAsync(_cts.Token);
         }
-
-
-
-        public class DateRange
+        private async Task InitializeAsyncGetInSituData()
         {
-            public DateTime startDate { get; set; }
-            public DateTime endDate { get; set; }
+            var dueTime = TimeSpan.FromSeconds(0);
+            var interval = TimeSpan.FromHours(1);
+
+            var cancel = new CancellationTokenSource();
+            cancel.Token.ThrowIfCancellationRequested();
+
+            try
+            {
+
+                await RunPeriodicAsync(getInSituData, dueTime, interval, cancel.Token);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                await InitializeAsyncGetInSituData();
+            }
         }
 
+
+        private async void getInSituData()
+        {
+            try
+            {
+                var client = new HttpClient();
+
+                //https://dashboard.awi.de/data-xxl/rest/data?beginDate=2020-10-01T00:01:00&endDate=2021-10-01T00:01:00&format=application/json&aggregate=DAY&sensors=station:svluwobs:fb_731101:sbe45_awi_0403:salinity&sensors=station:svluwobs:fb_731101:sbe45_awi_0403:temperature
+
+                client.BaseAddress = new Uri("https://dashboard.awi.de");
+                client.DefaultRequestHeaders.Add("User-Agent", "C# console program");
+                client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string fromDate = DateTime.Now.AddDays(-1).ToString("yyyy-MM-ddTHH:mm:ss");
+                string toDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+
+                var url = "data-xxl/rest/data?beginDate=" + fromDate + "&endDate=" + toDate + "&format=application/json&aggregate=HOUR&sensors=station:svluwobs:fb_731101:sbe45_awi_0403:salinity&sensors=station:svluwobs:fb_731101:sbe45_awi_0403:temperature&sensors=station:svluwobs:fb_731101:oxygen_awi_574:oxygen_saturation";
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var resp = await response.Content.ReadAsStringAsync();
+
+                inSituData = JsonConvert.DeserializeObject<InSituData>(resp);
+                IList<string> d = inSituData.data.Last<IList<string>>();
+                inSituData.time = DateTime.Parse(d.ElementAt<string>(0).ToString());
+
+                bool success = false;
+                double s, t, o;
+
+                // Use CultureInfo.InvariantCulture to ensure the period (.) is used as the decimal separator
+                success = double.TryParse(d.ElementAt<string>(1).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out s);
+                success &= double.TryParse(d.ElementAt<string>(2).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out t);
+                success &= double.TryParse(d.ElementAt<string>(3).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out o);
+
+                if (success && s > 0 && o > 0)
+                {
+                    inSituData.salinite = s;
+                    inSituData.temperature = t;
+                    inSituData.oxygen = o;
+                }
+
+
+                lbl_TimeInSitu.Content = "InSitu data Time: " + inSituData.time.ToString("yyyy-MM-dd HH:mm:ss");
+                lbl_TempInSitu.Content = string.Format(CultureInfo.InvariantCulture, "Temperature: {0:0.00} °C", inSituData.temperature);
+                lbl_SalinityInSitu.Content = string.Format(CultureInfo.InvariantCulture, "Salinity:          {0:0.00}", inSituData.salinite);
+                lbl_OxyInSitu.Content = string.Format(CultureInfo.InvariantCulture, "Oxygen:         {0:0.00}%", inSituData.oxygen);
+
+
+
+                //data.ForEach(Console.WriteLine);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Could not retrieve in situ data: " + e.Message + "\nCheck the internet connection.");
+            }
+
+
+
+        }
         private async Task HandleWebSocketAsync(HttpListenerContext context)
         {
 
@@ -773,7 +863,7 @@ namespace WebSocketServerExample
                                     {
                                         debitTotal += aq.debit;
                                     }
-                                    labelDebittotal.Content = "Débit Total: " + debitTotal.ToString("F2");
+                                    //labelDebittotal.Content = "Débit Total: " + debitTotal.ToString("F2");
 
                                     var alarm = alarms.FirstOrDefault(x => x.AquaID == t.ID);
                                     checkAlarm(alarm);

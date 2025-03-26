@@ -18,7 +18,7 @@ const byte PLCID = 1;
 /***** PIN ASSIGNMENTS *****/
 const byte PIN_DEBITMETRE[12] = { 54,55,56,57,58,59,19,60,61,62,63,64 };//Chaud, froid, ambiant
 
-const byte PIN_HR[12] = { 36,37,38,39,40,4,41,42,43,44,45,8 };//Chaud, froid, ambiant
+const byte PIN_HR[12] = { 37,36,39,38,4,40,42,41,44,43,8,45 };//Chaud, froid, ambiant
 const byte PIN_PRESSION = 65;
 const byte PIN_V2V = 5;
 
@@ -126,12 +126,14 @@ void setup() {
         
         meso[i].regulTemp.pid.SetOutputLimits(0, 100);
         meso[i].regulTemp.pid.SetMode(AUTOMATIC);
-        meso[i].regulTemp.pid.SetTunings(5.0,1.0,0.0);
-
+        meso[i].regulTemp.pid.SetTunings(5.0, 1.0, 0.0);
+        meso[i].regulTemp.pid.SetControllerDirection(DIRECT);
+        pinMode(PIN_HR[i], OUTPUT);
+        pinMode(PIN_DEBITMETRE[i], INPUT);
         digitalWrite(PIN_HR[i], LOW);
     }
 
-    /*
+    
     Ethernet.begin(mac);
     Serial.println("ETHER");
     if (Ethernet.hardwareStatus() == EthernetNoHardware) {
@@ -152,7 +154,7 @@ void setup() {
 
     webSocket.begin(SERVER_IP, 81);
     webSocket.onEvent(webSocketEvent);
-    */
+    
 
     RTC.read();
     //setPIDparams();
@@ -163,7 +165,7 @@ void setup() {
     tempoMBSensorRead.interval = 100;
 
     for (int i = 0; i < 12; i++) {
-        meso[i].regulTemp.consigne = 34;
+        meso[i].regulTemp.consigne = 0.5;
     }
 
 }
@@ -187,24 +189,14 @@ void loop() {
     Serial.println("Consigne: " + String(meso[0].regulTemp.consigne));
     Serial.println("Mesure: " + String(meso[0].temperature));
     }
-    /*delay(2000);
-
-    digitalWrite(PIN_HR[0], LOW);
-
-    delay(2000);
-
-    digitalWrite(PIN_HR[0], HIGH);*/
 
 
 }
 
 bool regulTemp() {
-    //for (int i = 0; i < 12; i++) {
-       // meso[i].regulTemperature();
-    //}
-    meso[0].regulTemperature();
-    //Serial.println("Consigne: " + String(meso[0].regulTemp.consigne));
-    //Serial.println("Mesure: " + String(meso[0].temperature));
+    for (int i = 0; i < 12; i++) {
+       meso[i].regulTemperature();
+    }
 }
 
 
@@ -253,9 +245,9 @@ void readMBSensors() {
             }
             else if (mbSensor.readValues(&master, &meso[sensorIndex].O2, &meso[sensorIndex].temperature)) {
 
-                /*Serial.print(F("Sensor ID:")); Serial.println(meso[sensorIndex].id);
+                Serial.print(F("Sensor ID:")); Serial.println(meso[sensorIndex].id);
                 Serial.print(F("oxy %:")); Serial.println(meso[sensorIndex].O2);
-                Serial.print(F("temp:")); Serial.println(meso[sensorIndex].temperature);*/
+                Serial.print(F("temp:")); Serial.println(meso[sensorIndex].temperature);
                 state = 0;
                 sensorIndex++;
                 if (sensorIndex == 12) sensorIndex = 0;

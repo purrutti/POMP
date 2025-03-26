@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F47ECCDF-F7AA-4885-AEB8-633E1D48F797}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SuperviPOMP</RootNamespace>
+    <AssemblyName>SuperviPOMP</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SensorCalibration.xaml.cs">
+      <DependentUpon>SensorCalibration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\CsvHelper.33.0.1\lib\net47\CsvHelper.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\Fleck.1.2.0\lib\net45\Fleck.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\InfluxDB.Client.Core.4.18.0\lib\netstandard2.0\InfluxDB.Client.Core.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\InfluxDB.Client.4.18.0\lib\netstandard2.0\InfluxDB.Client.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\JsonSubTypes.2.0.1\lib\net47\JsonSubTypes.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Microsoft.CSharp.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\Microsoft.Extensions.ObjectPool.8.0.8\lib\net462\Microsoft.Extensions.ObjectPool.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\Microsoft.Net.Http.Headers.2.2.8\lib\netstandard2.0\Microsoft.Net.Http.Headers.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\mscorlib.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\NodaTime.3.1.11\lib\netstandard2.0\NodaTime.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\NodaTime.Serialization.JsonNet.3.1.0\lib\netstandard2.0\NodaTime.Serialization.JsonNet.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationCore.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationFramework.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\RestSharp.112.0.0\lib\net471\RestSharp.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Collections.Immutable.8.0.0\lib\net462\System.Collections.Immutable.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Configuration.ConfigurationManager.8.0.0\lib\net462\System.Configuration.ConfigurationManager.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Configuration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Data.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Net.Http.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Numerics.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Reactive.6.0.1\lib\net472\System.Reactive.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Text.Json.8.0.4\lib\net462\System.Text.Json.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Web.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xaml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xml.Linq.dll" />
+    <ReferencePath Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\packages\WebSocketSharp.Standard.1.0.3\lib\netstandard2.0\websocket-sharp-standard.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\WindowsBase.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\netstandard.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\SuperviPOMP\obj\Debug\MainWindow.g.cs" />
+    <Compile Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\SuperviPOMP\obj\Debug\SensorCalibration.g.cs" />
+    <Compile Include="C:\Users\pierr\Dropbox\Pierre\CNRS\repos\POMP\SuperviPOMP\SuperviPOMP\SuperviPOMP\obj\Debug\App.g.cs" />
+  </ItemGroup>
+</Project>
