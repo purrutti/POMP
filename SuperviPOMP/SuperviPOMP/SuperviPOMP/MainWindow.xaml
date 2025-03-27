@@ -31,18 +31,6 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <DataGrid x:Name="MasterDataDataGrid" AutoGenerateColumns="False" Margin="0,106,10,13" Grid.Row="4" HorizontalAlignment="Right" Width="311">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Condition" Binding="{Binding ConditionID}" />
-                <DataGridTextColumn Header="Temperature" Binding="{Binding Temperature}" />
-                <DataGridTextColumn Header="Pression" Binding="{Binding Pression}" />
-                <DataGridTextColumn Header="Debit" Binding="{Binding Debit}" />
-                <!-- Ignore these columns -->
-                <!--<DataGridTextColumn Header="Regulation Temp" Binding="{Binding RTemp}" />
-        <DataGridTextColumn Header="Regulation Pression" Binding="{Binding RPression}" />-->
-            </DataGrid.Columns>
-        </DataGrid>
-
         <ScrollViewer x:Name="MessageScrollViewer" Grid.Row="5" Margin="10,6,10,10" Height="150">
             <TextBox x:Name="MessageTextBox" IsReadOnly="True" TextWrapping="Wrap" />
         </ScrollViewer>
@@ -53,6 +41,37 @@
             <Label x:Name="lbl_OxyInSitu" Content="Oxygen Saturation: "/>
             <Label x:Name="lbl_SalinityInSitu" Content="Salinity: "/>
         </StackPanel>
+        <Label x:Name="lbl_TimeInSitu_Copy" Content="SETPOINTS" FontWeight="Bold" FontSize="14" Margin="684,33,0,188" Grid.Row="4"/>
+        <ComboBox x:Name="cbAquaNumber" HorizontalAlignment="Left" Margin="784,69,0,0" VerticalAlignment="Top" Width="77" Grid.Row="4" SelectionChanged="cbAquaNumber_SelectionChanged">
+            <ComboBoxItem Content="1"/>
+            <ComboBoxItem Content="2"/>
+            <ComboBoxItem Content="3"/>
+            <ComboBoxItem Content="4"/>
+            <ComboBoxItem Content="5"/>
+            <ComboBoxItem Content="6"/>
+            <ComboBoxItem Content="7"/>
+            <ComboBoxItem Content="8"/>
+            <ComboBoxItem Content="9"/>
+            <ComboBoxItem Content="10"/>
+            <ComboBoxItem Content="11"/>
+            <ComboBoxItem Content="12"/>
+            <ComboBoxItem Content="13"/>
+            <ComboBoxItem Content="14"/>
+            <ComboBoxItem Content="15"/>
+            <ComboBoxItem Content="16"/>
+            <ComboBoxItem Content="17"/>
+            <ComboBoxItem Content="18"/>
+            <ComboBoxItem Content="19"/>
+            <ComboBoxItem Content="20"/>
+            <ComboBoxItem Content="21"/>
+            <ComboBoxItem Content="22"/>
+            <ComboBoxItem Content="23"/>
+            <ComboBoxItem Content="24"/>
+        </ComboBox>
+        <Label Content="Tank number" HorizontalAlignment="Left" Margin="693,65,0,0" VerticalAlignment="Top" Grid.Row="4"/>
+        <Label Content="Temperature offset: " HorizontalAlignment="Left" Margin="693,99,0,0" VerticalAlignment="Top" Grid.Row="4"/>
+        <TextBox x:Name="tb_TempSetpoint" HorizontalAlignment="Left" Margin="827,103,0,0" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Width="80" Height="22"/>
+        <Button Content="Submit" HorizontalAlignment="Left" Margin="920,100,0,0" Grid.Row="4" VerticalAlignment="Top" Height="28" Width="64" Click="Button_Click"/>
 
     </Grid>
 </Window>

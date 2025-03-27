@@ -29,6 +29,7 @@ using System.Windows.Input;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace WebSocketServerExample
 {
@@ -434,7 +435,6 @@ namespace WebSocketServerExample
                 }
 
                 AquariumsDataGrid.ItemsSource = aquariums;
-                MasterDataDataGrid.ItemsSource = md.Data;
 
 
                 calibrationWindow = new SensorCalibration();
@@ -886,102 +886,6 @@ namespace WebSocketServerExample
                             break;
                         case 4://CALIBRATE SENSOR  ==> irrelevant
                             break;
-
-                        case 6://SEND DATA ==> receive masterdata 
-                            md = JsonConvert.DeserializeObject<MasterData>(data);
-
-                            //md.Data[2].Temperature = 19.2;
-                            //md = JsonHelper.DeserializePreservingExisting<MasterData>(data,md);
-                            //md.Data[2].Temperature = 21;
-
-                            Dispatcher.Invoke(() =>
-                            {
-
-                                MasterDataDataGrid.ItemsSource = null;
-                                MasterDataDataGrid.ItemsSource = md.Data;
-                            });
-
-                            var requestMessage = JsonConvert.SerializeObject(new { cmd = 6, AquaID = t.ID, tempAmbiante = md.Data[2].Temperature, pHAmbiant = md.Data[2].pH, tempChaud = md.Data[0].Temperature, tempFroid = md.Data[1].Temperature });
-                            await BroadcastMessageAsync(requestMessage);
-
-                            setAlarms();
-                            /*Dispatcher.Invoke(() =>
-                            {
-                                aquariums[a.ID - 1] = a;
-                                // Reset the ItemsSource of the DataGrid to trigger UI refresh
-                                AquariumsDataGrid.ItemsSource = null;
-                                AquariumsDataGrid.ItemsSource = aquariums;
-                            });*/
-                            break;
-                        case 7://Request from Frontend ==> send all aquarium data to frontend
-                            var subset = aquariums.Take(12).ToList();
-                            s = JsonConvert.SerializeObject(subset);
-                            buffer = Encoding.UTF8.GetBytes(s);
-                            await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                            break;
-                        case 8://Request from Frontend ==> send all flumes data to frontend
-
-                            var subset2 = aquariums.Skip(12).Take(8).ToList();
-                            s = JsonConvert.SerializeObject(subset2);
-                            buffer = Encoding.UTF8.GetBytes(s);
-                            await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                            break;
-                        case 9://Request from Frontend ==> send masterdata to frontend
-                            s = JsonConvert.SerializeObject(md);
-                            buffer = Encoding.UTF8.GetBytes(s);
-                            await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                            break;
-                        case 10://Get alarms
-                            var r = new
-                            {
-                                cmd = 10,
-                                alarms
-                            };
-                            s = JsonConvert.SerializeObject(r);
-                            buffer = Encoding.UTF8.GetBytes(s);
-                            await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                            break;
-                        case 11://Front end sends alarms settings
-                            alarmSettings = JsonHelper.DeserializePreservingExisting<AlarmSettings>(data);
-                            SaveToConfig();
-                            setAlarms();
-                            /*s = JsonConvert.SerializeObject(alarmSettings);
-                            buffer = Encoding.UTF8.GetBytes(s);
-                            await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);*/
-                            break;
-                        case 12://cmd=12 qd une alarme sonne ou qd une alarme est acknowledged
-                            Alarme al = JsonHelper.DeserializePreservingExisting<Alarme>(data);
-                            var existingAlarme = alarms.FirstOrDefault(A => A.libelle == al.libelle);
-                            if (existingAlarme != null && al.acknowledged)
-                            {
-                                int index = alarms.IndexOf(existingAlarme);
-                                alarms[index].acknowledged = false;
-
-                                alarms[index].triggered = false;
-                                alarms[index].raised = false;
-                                alarms[index].dtAcknowledged = DateTime.Now;
-                                Alarme ala = alarms[index];
-                                var resp = new
-                                {
-                                    cmd = 12,
-                                    ala
-                                };
-                                s = JsonConvert.SerializeObject(resp);
-                                buffer = Encoding.UTF8.GetBytes(s);
-                                await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                            }
-
-                            break;
-                        case 13://Front end request alarms settings
-                            var re = new
-                            {
-                                cmd = 13,
-                                alarmSettings
-                            };
-                            s = JsonConvert.SerializeObject(re);
-                            buffer = Encoding.UTF8.GetBytes(s);
-                            await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                            break;
                     }
                 }
                 catch (Exception e)
@@ -1251,6 +1155,41 @@ namespace WebSocketServerExample
 
             calibrationWindow.Close();
             System.Windows.Application.Current.Shutdown();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+            double setpoint;
+            Double.TryParse(tb_TempSetpoint.Text, out setpoint);
+            int index = cbAquaNumber.SelectedIndex;
+            aquariums[index].regulTemp.offset = setpoint;
+
+
+            aquariums[index].regulTemp.Kp = 1.0;
+            aquariums[index].regulTemp.Ki = 10.0;
+            aquariums[index].regulTemp.Kd = 0.0;
+
+            var response = new
+            {
+                cmd = 2,
+                AquaID = aquariums[index].ID,
+                aquariums[index].PLCID,
+                rTemp = aquariums[index].regulTemp,
+            };
+
+            var broadcastMessage = JsonConvert.SerializeObject(response);
+            BroadcastMessageAsync(broadcastMessage);
+
+        }
+
+        private void cbAquaNumber_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            int index = cbAquaNumber.SelectedIndex;
+            double setpoint = aquariums[index].regulTemp.offset;
+
+            tb_TempSetpoint.Text = setpoint.ToString();
         }
     }
 }
