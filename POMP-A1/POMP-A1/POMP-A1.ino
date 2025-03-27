@@ -28,9 +28,9 @@ const byte PIN_V2V = 5;
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, PLCID };
 
 // Set the static IP address to use if the DHCP fails to assign
-IPAddress ip(172, 16, 36, 200 + PLCID);
+IPAddress ip(172, 16, 253, 200 + PLCID);
 
-const char* SERVER_IP = "192.168.73.14";
+const char* SERVER_IP = "172.16.253.82";
 
 WebSocketsClient webSocket;
 ModbusRtu master(0, 3, 46); // this is master and RS-232 or USB-FTDI
@@ -116,7 +116,7 @@ void setup() {
 
     int  startAddress = 10;
     for (int i = 0; i < 12; i++) {
-        meso[i] = Meso(i + 1, PIN_DEBITMETRE[i], PIN_HR[i]);
+        meso[i] = Meso(i + (PLCID*12-11), PIN_DEBITMETRE[i], PIN_HR[i]);
         meso[i].startAddress = startAddress;
         startAddress = meso[i].load();
 
@@ -134,7 +134,7 @@ void setup() {
     }
 
     
-    Ethernet.begin(mac);
+    Ethernet.begin(mac,ip);
     Serial.println("ETHER");
     if (Ethernet.hardwareStatus() == EthernetNoHardware) {
 
@@ -152,7 +152,7 @@ void setup() {
 
     Serial.print("localIP"); Serial.println(Ethernet.localIP());
 
-    webSocket.begin(SERVER_IP, 81);
+    webSocket.begin(SERVER_IP, 8189);
     webSocket.onEvent(webSocketEvent);
     
 
@@ -161,7 +161,7 @@ void setup() {
 
     Serial.println("START");
     tempoSensorRead.interval = 1000;
-    tempoSendValues.interval = 1000;
+    tempoSendValues.interval = 5000;
     tempoMBSensorRead.interval = 100;
 
     for (int i = 0; i < 12; i++) {
@@ -170,10 +170,9 @@ void setup() {
 
 }
 
-
 void loop() {
 
-    //webSocket.loop();
+    webSocket.loop();
 
 
     readMBSensors();
@@ -181,13 +180,17 @@ void loop() {
    regulTemp();
 
     if (elapsed(&tempoSendValues)) {
-       // sendData();
+       sendData();
 
-        Serial.println("Toggle: " + String(meso[0].toggleHR));
+        for (int i = 0; i < 12; i++)
+        {
+                Serial.print(F("*********\nSensor ID:")); Serial.println(meso[i].id);
+            Serial.print(F("oxy %:")); Serial.println(meso[i].O2);
+            Serial.print(F("temp:")); Serial.println(meso[i].temperature);
+            Serial.print(F("consigne:")); Serial.println(meso[i].regulTemp.consigne);
+            Serial.print(F("PID%:")); Serial.println(meso[i].regulTemp.sortiePID_pc);
+        }
 
-        Serial.println("%: " + String(meso[0].regulTemp.sortiePID_pc));
-    Serial.println("Consigne: " + String(meso[0].regulTemp.consigne));
-    Serial.println("Mesure: " + String(meso[0].temperature));
     }
 
 
@@ -196,6 +199,7 @@ void loop() {
 bool regulTemp() {
     for (int i = 0; i < 12; i++) {
        meso[i].regulTemperature();
+
     }
 }
 
@@ -245,9 +249,9 @@ void readMBSensors() {
             }
             else if (mbSensor.readValues(&master, &meso[sensorIndex].O2, &meso[sensorIndex].temperature)) {
 
-                Serial.print(F("Sensor ID:")); Serial.println(meso[sensorIndex].id);
+                /*Serial.print(F("Sensor ID:")); Serial.println(meso[sensorIndex].id);
                 Serial.print(F("oxy %:")); Serial.println(meso[sensorIndex].O2);
-                Serial.print(F("temp:")); Serial.println(meso[sensorIndex].temperature);
+                Serial.print(F("temp:")); Serial.println(meso[sensorIndex].temperature);*/
                 state = 0;
                 sensorIndex++;
                 if (sensorIndex == 12) sensorIndex = 0;
@@ -257,12 +261,13 @@ void readMBSensors() {
 }
 
 void sendData() {
-    //if (elapsed(&tempoSendValues)) {
-    /*Serial.println("SEND DATA");
-    serializeData(RTC.getTime(), PLCID, buffer);
-    Serial.println(buffer);
-    webSocket.sendTXT(buffer);*/
-    //}
+        Serial.println("SEND DATA");
+        for(int i=0;i<12;i++)
+        {
+            meso[i].serializeData(RTC.getTime(), PLCID, buffer);
+            Serial.println(buffer);
+            webSocket.sendTXT(buffer);
+        }
 
 }
 
@@ -271,8 +276,8 @@ void sendData() {
 void sendParams() {
     StaticJsonDocument<jsonDocSize> doc;
     Serial.println("SEND PARAMS");
-    for (int i = 0; i < 3; i++) {
-        //serializeParams(RTC.getTime(), PLCID, buffer);
+    for (int i = 0; i < 12; i++) {
+        meso[i].serializeParams(RTC.getTime(), PLCID, buffer);
         Serial.println(buffer);
         webSocket.sendTXT(buffer);
     }
@@ -322,7 +327,7 @@ void readJSON(char* json) {
             sendData();
             break;
         case SEND_PARAMS:
-            //deserializeParams(doc);
+            meso[senderID].deserializeParams(doc);
             break;
         default:
             //webSocket.sendTXT(F("wrong request"));

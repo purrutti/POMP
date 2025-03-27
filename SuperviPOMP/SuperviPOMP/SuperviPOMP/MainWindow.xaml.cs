@@ -554,39 +554,56 @@ namespace WebSocketServerExample
                 
             };
         }
-
         private async void StartServerButton_Click(object sender, RoutedEventArgs e)
+{
+    _cts = new CancellationTokenSource();
+    _listener = new HttpListener();
+    _listener.Prefixes.Add("http://172.16.253.82:8189/");
+
+    try
+    {
+        _listener.Start();
+        ServerStatusLabel.Content = "Server started";
+    }
+    catch (HttpListenerException ex)
+    {
+        MessageBox.Show($"Failed to start server: {ex.Message}");
+        return;
+    }
+
+    try
+    {
+        while (true)
         {
-
-            _cts = new CancellationTokenSource();
-            _listener = new HttpListener();
-            _listener.Prefixes.Add("http://192.168.73.14:81/");
-            _listener.Prefixes.Add("http://192.168.73.14/getCSV/");
-            _listener.Start();
-            ServerStatusLabel.Content = "Server started";
-
             try
             {
-                while (true)
+                var context = await _listener.GetContextAsync();
+                if (context.Request.IsWebSocketRequest)
                 {
-
-                    var context = await _listener.GetContextAsync();
-                    if (context.Request.IsWebSocketRequest)
-                    {
-                        _ = Task.Run(() => HandleWebSocketAsync(context));
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = 400;
-                        context.Response.Close();
-
-                    }
+                    _ = Task.Run(() => HandleWebSocketAsync(context));
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                    context.Response.Close();
                 }
             }
-            catch (Exception ex) { }
-
-            //await AcceptWebSocketClientsAsync(_cts.Token);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error accepting connection: {ex.Message}");
+            }
         }
+    }
+    catch (OperationCanceledException)
+    {
+        Console.WriteLine("Server stopped.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Unexpected error: {ex.Message}");
+    }
+}
+
         private async Task InitializeAsyncGetInSituData()
         {
             var dueTime = TimeSpan.FromSeconds(0);
@@ -849,11 +866,7 @@ namespace WebSocketServerExample
                                     aquariums[a.ID - 1] = JsonHelper.DeserializePreservingExisting(data, aquariums[a.ID - 1]);
 
                                     aquariums[a.ID - 1].oxymgl = CalculateDO(aquariums[a.ID - 1].oxy, aquariums[a.ID - 1].temperature, 35.0);
-                                    if (md.Data != null)
-                                    {
-                                        if (md.Data[2].Temperature > a.regulTemp.consigne) a.regulTemp.chaudFroid = false;
-                                        else a.regulTemp.chaudFroid = true;
-                                    }
+
                                     // Reset the ItemsSource of the DataGrid to trigger UI refresh
                                     AquariumsDataGrid.ItemsSource = null;
                                     AquariumsDataGrid.ItemsSource = aquariums;

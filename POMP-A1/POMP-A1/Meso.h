@@ -16,7 +16,6 @@ const char* sPLCID = "PLCID";
 const char* stime = "time";
 
 const char* soxy = "oxy";
-const char* spH = "pH";
 const char* stemp = "temp";
 const char* sdata = "data";
 const char* rTemp = "rTemp";
@@ -214,9 +213,74 @@ public:
                 toggleHR = true;
             }
         }
-        toggleHR = true;
         digitalWrite(pinCmdHR, toggleHR);
         return dutyCycle;
+    }
+
+    bool serializeData(uint32_t timeString, uint8_t sender, char* buffer) {
+        //Serial.println("SENDDATA");
+        //DynamicJsonDocument doc(512);
+
+        StaticJsonDocument<512> doc;
+
+        doc[scmd] = 3;
+        doc[sPLCID] = String(sender);
+        doc[sID] = String(id);
+        doc[stemp] = serialized(String((int)(temperature * 100 + 0.5) / 100.0, 2));
+        doc[soxy] = serialized(String((int)(O2 * 100 + 0.5) / 100.0));
+        doc[sdebit] = serialized(String((int)(debit * 100 + 0.5) / 100.0));
+
+
+        //Serial.print(F("CONDID:")); Serial.println(condID);
+        //Serial.print(F("socketID:")); Serial.println(socketID);
+        doc[stime] = timeString;
+
+        JsonObject regulT = doc.createNestedObject(rTemp);
+        regulT[scons] = regulTemp.consigne;
+        regulT[sPID_pc] = regulTemp.sortiePID_pc;
+
+        serializeJson(doc, buffer, bufferSize);
+        return true;
+    }
+
+    bool serializeParams(uint32_t timeString, uint8_t sender, char* buffer) {
+        StaticJsonDocument<300> doc;
+        //Serial.println(F("SEND PARAMS"));
+
+        doc[scmd] = 2;
+        doc[sPLCID] = String(sender);
+        doc[sID] = String(id);
+        doc[stime] = timeString;
+
+        JsonObject regulT = doc.createNestedObject(F("rTemp"));
+        regulT[scons] = regulTemp.consigne;
+        regulT[sKp] = regulTemp.Kp;
+        regulT[sKi] = regulTemp.Ki;
+        regulT[sKd] = regulTemp.Kd;
+        if (this->regulTemp.autorisationForcage) regulT[saForcage] = "true";
+        else regulT[saForcage] = "false";
+        regulT[sconsForcage] = regulTemp.consigneForcage;
+
+        serializeJson(doc, buffer, bufferSize);
+    }
+
+    void deserializeParams(StaticJsonDocument<jsonDocSize> doc) {
+
+        JsonObject regulT = doc[rTemp];
+
+        regulTemp.consigne = regulT[scons]; // 24.2
+        regulTemp.Kp = regulT[sKp]; // 2.1
+        regulTemp.Ki = regulT[sKi]; // 2.1
+        regulTemp.Kd = regulT[sKd]; // 2.1
+        const char* regulTemp_autorisationForcage = regulT[saForcage];
+        if (strcmp(regulTemp_autorisationForcage, "true") == 0 || strcmp(regulTemp_autorisationForcage, "True") == 0) regulTemp.autorisationForcage = true;
+        else regulTemp.autorisationForcage = false;
+        regulTemp.consigneForcage = regulT[sconsForcage]; // 2.1
+
+        regulTemp.useOffset = regulT[F("useOffset")];
+        regulTemp.offset = regulT[F("offset")];
+
+
     }
 
 };
