@@ -233,11 +233,16 @@ public:
 
         //Serial.print(F("CONDID:")); Serial.println(condID);
         //Serial.print(F("socketID:")); Serial.println(socketID);
-        doc[stime] = timeString;
+       // doc[stime] = timeString;
 
         JsonObject regulT = doc.createNestedObject(rTemp);
         regulT[scons] = regulTemp.consigne;
+        regulT["offset"] = regulTemp.offset;
         regulT[sPID_pc] = regulTemp.sortiePID_pc;
+
+        regulT[sKp] = regulTemp.Kp;
+        regulT[sKi] = regulTemp.Ki;
+        regulT[sKd] = regulTemp.Kd;
 
         serializeJson(doc, buffer, bufferSize);
         return true;
@@ -254,6 +259,7 @@ public:
 
         JsonObject regulT = doc.createNestedObject(F("rTemp"));
         regulT[scons] = regulTemp.consigne;
+        regulT["offset"] = regulTemp.offset;
         regulT[sKp] = regulTemp.Kp;
         regulT[sKi] = regulTemp.Ki;
         regulT[sKd] = regulTemp.Kd;
@@ -265,7 +271,7 @@ public:
     }
 
     void deserializeParams(StaticJsonDocument<jsonDocSize> doc) {
-
+        Serial.println("DESERIALIAZE PARAMS");
         JsonObject regulT = doc[rTemp];
 
         regulTemp.consigne = regulT[scons]; // 24.2
@@ -279,6 +285,11 @@ public:
 
         regulTemp.useOffset = regulT[F("useOffset")];
         regulTemp.offset = regulT[F("offset")];
+
+        Serial.println("OFFSET:" + String(regulTemp.offset));
+
+        Serial.println("consigne:" + String(regulTemp.consigne));
+        save();
 
 
     }

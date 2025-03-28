@@ -72,35 +72,15 @@ namespace SuperviPOMP
             int PLCID = 0;
             int sensorID = 0;
             int aquaID = cbAquaNumber.SelectedIndex + 1;
-            if (aquaID < 4)
+            if (aquaID < 13)
             {
                 PLCID = 1;
                 sensorID = aquaID + 9;
             }
-            else if (aquaID < 7)
+            else 
             {
                 PLCID = 2;
-                sensorID = aquaID + 9 - 3;
-            }
-            else if (aquaID < 10)
-            {
-                PLCID = 3;
-                sensorID = aquaID + 9 - 6;
-            }
-            else if (aquaID < 13)
-            {
-                PLCID = 4;
-                sensorID = aquaID + 9 - 9;
-            }
-            else if (aquaID < 17)
-            {
-                PLCID = 6;
                 sensorID = aquaID - 3;
-            }
-            else if (aquaID < 21)
-            {
-                PLCID = 7;
-                sensorID = aquaID - 7;
             }
 
             double value = 0.0;
@@ -112,35 +92,15 @@ namespace SuperviPOMP
             int PLCID = 0;
             int sensorID = 0;
             int aquaID = cbAquaNumber.SelectedIndex + 1;
-            if (aquaID < 4)
+            if (aquaID < 13)
             {
                 PLCID = 1;
                 sensorID = aquaID + 9;
             }
-            else if (aquaID < 7)
+            else
             {
                 PLCID = 2;
-                sensorID = aquaID + 9 - 3;
-            }
-            else if (aquaID < 10)
-            {
-                PLCID = 3;
-                sensorID = aquaID + 9 - 6;
-            }
-            else if (aquaID < 13)
-            {
-                PLCID = 4;
-                sensorID = aquaID + 9 - 9;
-            }
-            else if (aquaID < 17)
-            {
-                PLCID = 6;
                 sensorID = aquaID - 3;
-            }
-            else if (aquaID < 21)
-            {
-                PLCID = 7;
-                sensorID = aquaID - 7;
             }
 
 

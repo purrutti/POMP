@@ -134,6 +134,15 @@ namespace WebSocketServerExample
 
     }
 
+    public class PressionData
+    {
+        public int Cmd { get; set; }
+        [JsonProperty("pression", Required = Required.Default)]
+        public double pression { get; set; }
+        [JsonProperty("sPIDpression", Required = Required.Default)]
+        public double SPIDPression { get; set; }
+    }
+
     public class DataItem
     {
         [JsonProperty("CondID", Required = Required.Default)]
@@ -178,7 +187,7 @@ namespace WebSocketServerExample
         public long time { get; set; }
         public DateTime lastUpdated { get; set; }
     }
-    
+
     public class Regul
     {
         [JsonProperty(Required = Required.Default)]
@@ -359,6 +368,7 @@ namespace WebSocketServerExample
 
 
         public InSituData inSituData = new InSituData();
+        public PressionData pressureData = new PressionData();
 
         public AlarmSettings alarmSettings { get; set; }
 
@@ -548,65 +558,65 @@ namespace WebSocketServerExample
                 flowRatesValue2 = double.Parse(ConfigurationManager.AppSettings["AlarmSettings.FlowRatesValue2"] ?? "0"),
                 temperatureEnabled = bool.Parse(ConfigurationManager.AppSettings["AlarmSettings.TemperatureEnabled"] ?? "false"),
                 temperatureValue = double.Parse(ConfigurationManager.AppSettings["AlarmSettings.TemperatureValue"] ?? "0"),
-               
+
                 o2Enabled = bool.Parse(ConfigurationManager.AppSettings["AlarmSettings.O2Enabled"] ?? "false"),
                 o2Value = double.Parse(ConfigurationManager.AppSettings["AlarmSettings.O2Value"] ?? "0")
-                
+
             };
         }
         private async void StartServerButton_Click(object sender, RoutedEventArgs e)
-{
-    _cts = new CancellationTokenSource();
-    _listener = new HttpListener();
-    _listener.Prefixes.Add("http://172.16.253.82:8189/");
-
-    try
-    {
-        _listener.Start();
-        ServerStatusLabel.Content = "Server started";
-    }
-    catch (HttpListenerException ex)
-    {
-        MessageBox.Show($"Failed to start server: {ex.Message}");
-        return;
-    }
-
-    try
-    {
-        while (true)
         {
+            _cts = new CancellationTokenSource();
+            _listener = new HttpListener();
+            _listener.Prefixes.Add("http://172.16.253.82:8189/");
+
             try
             {
-                var context = await _listener.GetContextAsync();
-                if (context.Request.IsWebSocketRequest)
+                _listener.Start();
+                ServerStatusLabel.Content = "Server started";
+            }
+            catch (HttpListenerException ex)
+            {
+                MessageBox.Show($"Failed to start server: {ex.Message}");
+                return;
+            }
+
+            try
+            {
+                while (true)
                 {
-                    _ = Task.Run(() => HandleWebSocketAsync(context));
+                    try
+                    {
+                        var context = await _listener.GetContextAsync();
+                        if (context.Request.IsWebSocketRequest)
+                        {
+                            _ = Task.Run(() => HandleWebSocketAsync(context));
+                        }
+                        else
+                        {
+                            context.Response.StatusCode = 400;
+                            context.Response.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error accepting connection: {ex.Message}");
+                    }
                 }
-                else
-                {
-                    context.Response.StatusCode = 400;
-                    context.Response.Close();
-                }
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("Server stopped.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error accepting connection: {ex.Message}");
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
         }
-    }
-    catch (OperationCanceledException)
-    {
-        Console.WriteLine("Server stopped.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Unexpected error: {ex.Message}");
-    }
-}
 
         private async Task InitializeAsyncGetInSituData()
         {
-            var dueTime = TimeSpan.FromSeconds(0);
+            var dueTime = TimeSpan.FromSeconds(10);
             var interval = TimeSpan.FromHours(1);
 
             var cancel = new CancellationTokenSource();
@@ -672,6 +682,22 @@ namespace WebSocketServerExample
                 lbl_OxyInSitu.Content = string.Format(CultureInfo.InvariantCulture, "Oxygen:         {0:0.00}%", inSituData.oxygen);
 
 
+                foreach (Aquarium a in aquariums)
+                {
+
+                    a.regulTemp.consigne = inSituData.temperature + a.regulTemp.offset;
+                    //a.regulTemp.Kp = inSituData.temperature + a.regulTemp.offset;
+                    var r = new
+                    {
+                        cmd = 2,
+                        AquaID = a.ID,
+                        PLCID = a.PLCID,
+                        rTemp = a.regulTemp,
+                    };
+
+                    var broadcastMessage = JsonConvert.SerializeObject(r);
+                    BroadcastMessageAsync(broadcastMessage);
+                }
 
                 //data.ForEach(Console.WriteLine);
             }
@@ -886,6 +912,16 @@ namespace WebSocketServerExample
                             break;
                         case 4://CALIBRATE SENSOR  ==> irrelevant
                             break;
+
+                        case 5://Pression
+                            Dispatcher.Invoke(() =>
+                            {
+
+                                var P = JsonConvert.DeserializeObject<PressionData>(data);
+                                lblPressure.Content = "Pressure Measure:" + P.pression.ToString() + " bars";
+                            });
+
+                            break;
                     }
                 }
                 catch (Exception e)
@@ -1047,15 +1083,15 @@ namespace WebSocketServerExample
             if (!System.IO.File.Exists(filePath))
             {
                 //Write headers
-                String header = "Time;EauAmbiante_pression;EauAmbiante_temperature;";
+                String header = "Time;EauAmbiante_pressure;EauAmbiante_pressureValveOpening;EauAmbiante_temperature;EauAmbiante_O2;EauAmbiante_salinity;";
 
                 for (int i = 1; i <= 24; i++)
                 {
-                    header += "Aqua["; header += i; header += "]_debit;";
+                    header += "Aqua["; header += i; header += "]_FLowRate;";
                     header += "Aqua["; header += i; header += "]_Temperature;";
                     header += "Aqua["; header += i; header += "]_O2;";
-                    header += "Aqua["; header += i; header += "]_consigne_Temp;";
-                    header += "Aqua["; header += i; header += "]_sortiePID_Temp;";
+                    header += "Aqua["; header += i; header += "]_TemperatureSetpoint;";
+                    header += "Aqua["; header += i; header += "]_HeatResistancePower%;";
                 }
                 header += "\n";
                 System.IO.File.WriteAllText(filePath, header);
@@ -1065,14 +1101,18 @@ namespace WebSocketServerExample
             try
             {
 
-                data += md.Data[2].Pression; data += ";";
-                data += md.Data[2].Temperature; data += ";";
+                data += pressureData.pression; data += ";";
+                data += pressureData.SPIDPression; data += ";";
+                data += inSituData.temperature; data += ";";
+                data += inSituData.oxygen; data += ";";
+                data += inSituData.salinite; data += ";";
 
 
-                writeDataPointAsync("Général", "Eau Ambiante", "pression", md.Data[2].Pression, dt);
-                writeDataPointAsync("Général", "Eau Ambiante", "regulPression.consigne", md.Data[2].RPression.consigne, dt);
-                writeDataPointAsync("Général", "Eau Ambiante", "regulPression.sortiePID", md.Data[2].RPression.sortiePID_pc, dt);
-                writeDataPointAsync("Général", "Eau Ambiante", "temperature", md.Data[2].Temperature, dt);
+                writeDataPointAsync("Général", "Eau Ambiante", "pression", pressureData.pression, dt);
+                writeDataPointAsync("Général", "Eau Ambiante", "regulPression.sortiePID", pressureData.SPIDPression, dt);
+                writeDataPointAsync("Général", "Eau Ambiante", "temperature", inSituData.temperature, dt);
+                writeDataPointAsync("Général", "Eau Ambiante", "temperature", inSituData.oxygen, dt);
+                writeDataPointAsync("Général", "Eau Ambiante", "temperature", inSituData.salinite, dt);
             }
             catch (Exception ex) { }
 
@@ -1161,13 +1201,15 @@ namespace WebSocketServerExample
         {
 
             double setpoint;
-            Double.TryParse(tb_TempSetpoint.Text, out setpoint);
+            Double.TryParse(tb_TempSetpoint.Text.Replace('.', ','), out setpoint);
             int index = cbAquaNumber.SelectedIndex;
             aquariums[index].regulTemp.offset = setpoint;
 
+            aquariums[index].regulTemp.consigne = setpoint + inSituData.temperature;
 
-            aquariums[index].regulTemp.Kp = 1.0;
-            aquariums[index].regulTemp.Ki = 10.0;
+
+            aquariums[index].regulTemp.Kp = 0.1;
+            aquariums[index].regulTemp.Ki = 1.0;
             aquariums[index].regulTemp.Kd = 0.0;
 
             var response = new
@@ -1190,6 +1232,34 @@ namespace WebSocketServerExample
             double setpoint = aquariums[index].regulTemp.offset;
 
             tb_TempSetpoint.Text = setpoint.ToString();
+        }
+
+        private void Button_PressureClick(object sender, RoutedEventArgs e)
+        {
+            double setpoint;
+            Double.TryParse(tb_PressuresetPoint.Text.Replace('.', ','), out setpoint);
+
+            var rPression = new Regul();
+            rPression.consigne = setpoint;
+            rPression.Kp = 100;
+            rPression.Ki = 10;
+            rPression.Kd = 2;
+
+
+            var response = new
+            {
+                cmd = 6,
+                PLCID = 1,
+                rPression,
+            };
+
+            var broadcastMessage = JsonConvert.SerializeObject(response);
+            BroadcastMessageAsync(broadcastMessage);
+        }
+
+        private void Window_Closing_1(object sender, CancelEventArgs e)
+        {
+
         }
     }
 }
